@@ -1,5 +1,6 @@
-from collections.abc import Iterable
 from django.db import models
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
 from django_cpf_cnpj.fields import CPFField
 
@@ -12,10 +13,8 @@ class Autor(models.Model):
     nacionalidade = CountryField()
     cpf = CPFField(masked=True, unique=True)
 
-    def save(self, *args, **kwargs):
+    def clean(self):
         if self.nacionalidade.code == 'BR' and not self.cpf:
-            raise ValueError('se nacionalidade brasil cpf nescesario')
+            raise ValidationError({'cpf': _('se nacionalidade brasil cpf obrigatorio')})
         if self.nacionalidade.code != 'BR' and self.cpf:
-            raise ValueError('cpf nescesario se nacionalidade for brasil')
-        return super().save(*args, **kwargs)
-
+            raise ValidationError({'cpf': _('cpf somente para nacionalidade brasil')})
