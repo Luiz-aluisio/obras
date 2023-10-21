@@ -11,7 +11,7 @@ class Autor(models.Model):
     email = models.EmailField(unique=True, null=True, blank=True, max_length=254)
     data_nascimeto = models.DateField(auto_now=False, auto_now_add=False)
     nacionalidade = CountryField()
-    cpf = CPFField(masked=True, unique=True)
+    cpf = CPFField(masked=True, unique=True, null=True, blank=True)
 
     def __str__(self):
         return self.nome
@@ -22,6 +22,11 @@ class Autor(models.Model):
         if self.nacionalidade.code != 'BR' and self.cpf:
             raise ValidationError({'cpf': _('cpf somente para nacionalidade brasil')})
         return super().clean()
+    
+    def delete(self, *args, **kwargs):
+        if self.obras.exists():
+            raise ValidationError(_('autor não pode ser excluido pois possui obras'))
+        return super().delete(*args, **kwargs)
 
 
 class Obra(models.Model):
@@ -29,7 +34,7 @@ class Obra(models.Model):
     descricao = models.CharField(max_length=240,null=False,blank=False)
     data_de_publicacao = models.DateField(auto_now=False, auto_now_add=False, null=True)
     data_de_exposicao = models.DateField(auto_now=False, auto_now_add=False,null=True)
-    autores = models.ManyToManyField(Autor)
+    autores = models.ManyToManyField(Autor, related_name='obras', null=True, blank=True)
     
     def __str__(self):
         return self.nome
