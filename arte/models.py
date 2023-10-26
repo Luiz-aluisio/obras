@@ -23,6 +23,10 @@ class Autor(models.Model):
             raise ValidationError({'cpf': _('cpf somente para nacionalidade brasil')})
         return super().clean()
     
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
+    
     def delete(self, *args, **kwargs):
         if self.obras.exists():
             raise ValidationError(_('autor não pode ser excluido pois possui obras'))
