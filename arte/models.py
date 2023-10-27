@@ -36,8 +36,8 @@ class Autor(models.Model):
 class Obra(models.Model):
     nome = models.CharField(max_length=128,null=False,blank=False)
     descricao = models.CharField(max_length=240,null=False,blank=False)
-    data_de_publicacao = models.DateField(auto_now=False, auto_now_add=False, null=True)
-    data_de_exposicao = models.DateField(auto_now=False, auto_now_add=False,null=True)
+    data_de_publicacao = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
+    data_de_exposicao = models.DateField(auto_now=False, auto_now_add=False,null=True,blank=True)
     autores = models.ManyToManyField(Autor, related_name='obras', null=True, blank=True)
     
     def __str__(self):
@@ -52,3 +52,8 @@ class Obra(models.Model):
                 }
             )
         return super().clean()
+    
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
+    
