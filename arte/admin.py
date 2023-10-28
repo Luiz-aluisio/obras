@@ -1,6 +1,4 @@
-from typing import Any
 from django.contrib import admin, messages
-from django.http.request import HttpRequest
 from django.urls import reverse
 from django.utils.html import format_html
 from .models import Autor, Obra
@@ -30,11 +28,10 @@ class ObraInline(admin.TabularInline):
 class AutorInline(admin.TabularInline):
     model = Autor.obras.through
 
+
 @admin.register(Obra)
 class ObraAdmin(admin.ModelAdmin):
-    list_display = (
-        'nome', 'id', 'autores_links'
-    )
+    list_display = ('nome', 'id', 'autores_links')
     actions = ['delete_selected']
     exclude = ['autores']
     inlines = [AutorInline]
@@ -45,14 +42,12 @@ class ObraAdmin(admin.ModelAdmin):
 
 @admin.register(Autor)
 class AutorAdmin(admin.ModelAdmin):
-    list_display = (
-        'nome', 'id', 'obras_links'
-    )
+    list_display = ('nome', 'id', 'obras_links')
     inlines = [ObraInline]
 
     def obras_links(self, obj):
         return related_links(obj, 'obras')
-    
+
     def delete_view(self, request, object_id, extra_context=None):
         obj = self.get_object(request, object_id)
 
@@ -63,5 +58,5 @@ class AutorAdmin(admin.ModelAdmin):
                 level=messages.ERROR,
             )
             return self.change_view(request, object_id, extra_context)
-        
+
         return super().delete_view(request, object_id, extra_context)
