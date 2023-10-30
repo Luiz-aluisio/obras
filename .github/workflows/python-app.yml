@@ -10,12 +10,17 @@ jobs:
         steps:
                 - uses: actions/checkout@v4
                 - name: set up python
-                  uses: actions/setup-python@v4
+                  run: pipx install poetry
+                - uses: actions/setup-python@v4
                   with:
                     python-version: '3.11'
-                    architecture: 'x64'
+                    cache: 'poetry'
+
                 - name: instalar dependencias
-                  uses: poetry install
+                  run: poetry install --with dev
 
                 - name: lint
-                  uses: task lint
+                  run: poetry run task lint
+
+                - name: testes
+                  run: poetry run task test

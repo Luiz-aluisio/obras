@@ -48,7 +48,7 @@ extend-exclude = "(migrations/)"
 [tool.taskipy.tasks]
 lint = "ruff . && blue --check . --diff"
 format = "blue . && isort ."
-run = "python managa.py runserver"
+run = "python manage.py runserver"
 pre_test = "task lint"
 test = "pytest -s -x --cov=arte -vv"
 post_test = "coverage html"
