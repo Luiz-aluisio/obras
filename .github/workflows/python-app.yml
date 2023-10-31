@@ -23,4 +23,6 @@ jobs:
                   run: poetry run task lint
 
                 - name: testes
-                  run: poetry run task test
+                  run: |
+                    cp contrib/env-sample .env
+                    poetry run task test
