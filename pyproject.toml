@@ -52,7 +52,7 @@ run = "python manage.py runserver"
 pre_test = "task lint"
 test = "pytest -s -x --cov=arte -vv"
 post_test = "coverage html"
-
+db-migrate = 'python manage.py  migrate'
 
 
 [build-system]
