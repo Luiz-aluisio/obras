@@ -4,6 +4,8 @@ aplicação para gerenciar autor e obras desenvolvidas em [python](https://pytho
 
 Para contribuir ou utilizar este projeto você deve ter o [poetry](https://python-poetry.org/) instalado.
 
+Copie o arquivo `contrib/env-sample` para `.env` e substitua as valores necessários.
+
 ## Execução da Aplicação
 
 comando para instalar dependencias de utilização da aplicação
