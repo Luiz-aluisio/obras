@@ -1,8 +1,8 @@
 from django.contrib import admin, messages
 from django.urls import reverse
 from django.utils.html import format_html
-from .models import Autor, Obra
 
+from .models import Autor, Obra
 
 admin.site.disable_action('delete_selected')
 

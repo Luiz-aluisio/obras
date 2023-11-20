@@ -1,4 +1,5 @@
 import pytest
+
 from arte.models import Autor, Obra
 
 
