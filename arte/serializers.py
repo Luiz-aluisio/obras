@@ -11,7 +11,7 @@ class AutorSerializer(serializers.HyperlinkedModelSerializer):
             'nome',
             'sexo',
             'email',
-            'data_nascimento',
+            'data_nascimeto',
             'nacionalidade',
             'cpf',
         ]

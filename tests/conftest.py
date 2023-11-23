@@ -24,3 +24,14 @@ def obra(db):
     obra.save()
 
     return obra
+
+
+@pytest.fixture
+def client_logged(client, django_user_model):
+    username = 'admin'
+    password = 'admin'
+    user = django_user_model.objects.create_user(
+        username=username, password=password
+    )
+    client.force_login(user)
+    return client
