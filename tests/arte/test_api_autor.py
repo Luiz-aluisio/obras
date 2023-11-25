@@ -1,4 +1,10 @@
+from datetime import date, timedelta
+
 from django.urls import reverse
+from model_bakery import baker
+from pytest import dict_remove_none
+
+from arte.serializers import AutorSerializer
 
 
 def test_campos_obrigatorio(client_logged):
@@ -93,3 +99,20 @@ def test_nacionalidade_invalido(client_logged):
     resultado = resp.json()
     esperado = {'nacionalidade': ['"ZZ" não é um escolha válido.']}
     assert resultado.items() >= esperado.items()
+
+
+def test_data_nacimento_futura(client_logged):
+    hoje = date.today()
+    um_dia = timedelta(days=1)
+    amanha = hoje + um_dia
+    autor = baker.make('arte.Autor', data_nascimeto=amanha)
+    entrada = dict_remove_none(AutorSerializer(autor).data)
+
+    resp = client_logged.post(reverse('autor-list'), data=entrada)
+    resultado = resp.json()
+    esperado = {
+        'data_nascimeto': [
+            f'Certifique-se que este valor seja menor ou igual a {hoje}.'
+        ]
+    }
+    assert resultado == esperado
