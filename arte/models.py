@@ -1,5 +1,5 @@
-from django.db import models
 from django.core.exceptions import ValidationError
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
 from django_cpf_cnpj.fields import CPFField
@@ -13,7 +13,10 @@ class Autor(models.Model):
     email = models.EmailField(
         unique=True, null=True, blank=True, max_length=254
     )
-    data_nascimeto = models.DateField(auto_now=False, auto_now_add=False)
+    data_nascimeto = models.DateField(
+        auto_now=False,
+        auto_now_add=False,
+    )
     nacionalidade = CountryField()
     cpf = CPFField(masked=True, unique=True, null=True, blank=True)
 
