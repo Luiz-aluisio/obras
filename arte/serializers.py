@@ -2,7 +2,7 @@ from datetime import date
 
 from rest_framework import serializers
 
-from .models import Autor
+from .models import Autor, Obra
 
 
 class AutorSerializer(serializers.HyperlinkedModelSerializer):
@@ -37,4 +37,32 @@ class AutorSerializer(serializers.HyperlinkedModelSerializer):
             'data_nascimeto',
             'nacionalidade',
             'cpf',
+        ]
+
+
+class ObraSerializer(serializers.HyperlinkedModelSerializer):
+    def validate(self, attrs):
+        if (
+            attrs.get('data_de_exposicao') is None
+            and attrs.get('data_de_publicacao') is None
+        ):
+            raise serializers.ValidationError(
+                {
+                    'data_de_exposicao': [
+                        'obrigatoria caso a data de publicacao nao seja informada'
+                    ],
+                    'data_de_publicacao': [
+                        'obrigatoria caso a data de exposicao não seja informada'
+                    ],
+                }
+            )
+        return super().validate(attrs)
+
+    class Meta:
+        model = Obra
+        fields = [
+            'nome',
+            'descricao',
+            'data_de_exposicao',
+            'data_de_publicacao',
         ]

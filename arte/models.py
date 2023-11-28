@@ -69,7 +69,7 @@ class Obra(models.Model):
                     'data_de_exposicao': _(
                         'obrigatoria caso a data de publicacao nao seja informada'
                     ),
-                    'data_de_publicao': _(
+                    'data_de_publicacao': _(
                         'obrigatoria caso a data de exposicao não seja informada'
                     ),
                 }

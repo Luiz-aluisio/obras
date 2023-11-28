@@ -5,6 +5,7 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register(r'autores', views.AutorViewSet)
+router.register(r'obras', views.ObraViewSet)
 
 
 urlpatterns = [
