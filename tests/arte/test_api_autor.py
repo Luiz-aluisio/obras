@@ -116,3 +116,16 @@ def test_data_nacimento_futura(client_logged):
         ]
     }
     assert resultado == esperado
+
+
+def test_remover_autor_com_obra(client_logged):
+    obras = baker.prepare(
+        'arte.Obra', data_de_exposicao='2020-12-31', _quantity=1
+    )
+    autor = baker.make('arte.Autor', obras=obras)
+
+    url = reverse('autor-list') + str(autor.id) + '/'
+    resp = client_logged.delete(url)
+    resultado = resp.json()
+    esperado = {'autor': ['autor não pode ser excluido pois possui obras']}
+    assert resultado == esperado
