@@ -4,7 +4,7 @@ from django.urls import reverse
 from model_bakery import baker
 from pytest import dict_remove_none
 
-from arte.serializers import AutorSerializer
+from obras.arte.serializers import AutorSerializer
 
 
 def test_campos_obrigatorio(client_logged):

@@ -6,7 +6,7 @@ from .serializers import AutorSerializer, ObraSerializer
 
 
 class AutorViewSet(viewsets.ModelViewSet):
-    queryset = Autor.objects.all()
+    queryset = Autor.objects.all().order_by('id')
     serializer_class = AutorSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -20,6 +20,6 @@ class AutorViewSet(viewsets.ModelViewSet):
 
 
 class ObraViewSet(viewsets.ModelViewSet):
-    queryset = Obra.objects.all()
+    queryset = Obra.objects.all().order_by('id')
     serializer_class = ObraSerializer
     permission_classes = [permissions.IsAuthenticated]
