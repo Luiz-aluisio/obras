@@ -44,8 +44,8 @@ INSTALLED_APPS = [
     'django_countries',
     'django_cpf_cnpj',
     'rest_framework',
-    'base',
-    'arte',
+    'obras.base',
+    'obras.arte',
 ]
 
 MIDDLEWARE = [

@@ -1,6 +1,6 @@
 import pytest
 
-from arte.models import Autor, Obra
+from obras.arte.models import Autor, Obra
 
 
 def pytest_configure():

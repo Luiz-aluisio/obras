@@ -53,7 +53,7 @@ lint = "ruff . && blue --check . --diff"
 format = "blue . && isort ."
 run = "python manage.py runserver"
 pre_test = "task lint"
-test = "pytest -s -x --cov=arte -vv"
+test = "pytest -s -x --cov=obras -vv"
 post_test = "coverage html"
 db-migrate = 'python manage.py  migrate'
 
