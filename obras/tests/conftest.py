@@ -1,6 +1,9 @@
 import pytest
+from model_bakery import baker
 
-from obras.arte.models import Autor, Obra
+
+def dict_remove_none(data):
+    return {key: value for key, value in data.items() if value is not None}
 
 
 def pytest_configure():
@@ -8,26 +11,11 @@ def pytest_configure():
 
 
 @pytest.fixture
-def autor():
-    return Autor(
-        nome='Fernando Pessoa',
-        sexo='M',
-        email='gabriel@email.com',
-        data_nascimeto='1927-03-06',
-        nacionalidade='ME',
+def autor_com_obra(db):
+    obras = baker.prepare(
+        'arte.Obra', data_de_exposicao='2020-12-31', _quantity=1
     )
-
-
-@pytest.fixture
-def obra(db):
-    obra = Obra(
-        nome='O mundo de sofia',
-        descricao='conta historia da filosofia',
-        data_de_publicacao='1991-12-05',
-    )
-    obra.save()
-
-    return obra
+    return baker.make('arte.Autor', obras=obras)
 
 
 @pytest.fixture
@@ -39,7 +27,3 @@ def client_logged(client, django_user_model):
     )
     client.force_login(user)
     return client
-
-
-def dict_remove_none(data):
-    return {key: value for key, value in data.items() if value is not None}

@@ -9,12 +9,15 @@ from obras.arte.serializers import AutorSerializer
 
 def test_campos_obrigatorio(client_logged):
     resp = client_logged.post(reverse('autor-list'), data={})
-    campos = resp.json()
-    esperado = ['Este campo é obrigatório.']
-    assert campos['data_nascimeto'] == esperado
-    assert campos['nacionalidade'] == esperado
-    assert campos['sexo'] == esperado
-    assert campos['nome'] == esperado
+    resultado = resp.json()
+    obrigatorio = ['Este campo é obrigatório.']
+    esperado = {
+        'data_nascimeto': obrigatorio,
+        'nacionalidade': obrigatorio,
+        'sexo': obrigatorio,
+        'nome': obrigatorio,
+    }
+    assert esperado == resultado
 
 
 def test_listar_autores_200(client_logged):
@@ -22,33 +25,33 @@ def test_listar_autores_200(client_logged):
     assert resp.status_code == 200
 
 
-def test_email_invalido(client_logged):
+def test_email_invalido(client_logged, faker):
     resp = client_logged.post(
-        reverse('autor-list'), data={'email': 'email invalido'}
+        reverse('autor-list'), data={'email': faker.text(10)}
     )
-    campos = resp.json()
+    resultado = resp.json()
     esperado = ['Insira um endereço de email válido.']
-    assert campos['email'] == esperado
+    assert resultado['email'] == esperado
 
 
-def test_cpf_obrigatorio_nacionalidade_brasil(client_logged):
+def test_cpf_obrigatorio_nacionalidade_brasil(client_logged, faker):
     entrada = {
-        'nome': 'Monteiro Lobato',
+        'nome': faker.name(),
         'sexo': 'M',
-        'data_nascimeto': '1882-04-18',
+        'data_nascimeto': faker.date(),
         'nacionalidade': 'BR',
     }
     resp = client_logged.post(reverse('autor-list'), data=entrada)
-    campos = resp.json()
+    resultado = resp.json()
     esperado = ['se nacionalidade brasil cpf obrigatorio']
-    assert campos['cpf'] == esperado
+    assert resultado['cpf'] == esperado
 
 
-def test_nao_brasileiro_com_cpf(client_logged):
+def test_nao_brasileiro_com_cpf(client_logged, faker):
     entrada = {
-        'nome': 'Mariah Isabelle Mariah Rezende',
+        'nome': faker.name(),
         'cpf': '585.479.126-90',
-        'data_nascimeto': '1963-09-06',
+        'data_nascimeto': faker.date(),
         'sexo': 'F',
         'nacionalidade': 'MX',
     }
@@ -58,15 +61,9 @@ def test_nao_brasileiro_com_cpf(client_logged):
     assert campos == esperado
 
 
-def test_email_duplicado(client_logged, autor):
-    entrada = {
-        'nome': 'Monteiro Lobato',
-        'sexo': 'M',
-        'data_nascimeto': '1882-04-18',
-        'nacionalidade': 'BR',
-        'cpf': '585.479.126-90',
-        'email': 'gabriel@email.com',
-    }
+def test_email_duplicado(client_logged, faker):
+    autor = baker.make('arte.Autor', email=faker.email())
+    entrada = dict_remove_none(AutorSerializer(autor).data)
     autor.save()
     resp = client_logged.post(reverse('autor-list'), data=entrada)
     resultado = resp.json()
@@ -74,18 +71,9 @@ def test_email_duplicado(client_logged, autor):
     assert resultado == esperado
 
 
-def test_cpf_duplicado(client_logged, autor):
-    autor.nacionalidade = 'BR'
-    autor.cpf = '585.479.126-90'
-    autor.save()
-    entrada = {
-        'nome': 'Monteiro Lobato',
-        'sexo': 'M',
-        'data_nascimeto': '1882-04-18',
-        'nacionalidade': 'BR',
-        'cpf': '585.479.126-90',
-    }
-
+def test_cpf_duplicado(client_logged):
+    autor = baker.make('arte.Autor', nacionalidade='BR', cpf='585.479.126-90')
+    entrada = dict_remove_none(AutorSerializer(autor).data)
     resp = client_logged.post(reverse('autor-list'), data=entrada)
     resultado = resp.json()
     esperado = {'cpf': ['autor com este cpf já existe.']}
@@ -118,13 +106,8 @@ def test_data_nacimento_futura(client_logged):
     assert resultado == esperado
 
 
-def test_remover_autor_com_obra(client_logged):
-    obras = baker.prepare(
-        'arte.Obra', data_de_exposicao='2020-12-31', _quantity=1
-    )
-    autor = baker.make('arte.Autor', obras=obras)
-
-    url = reverse('autor-list') + str(autor.id) + '/'
+def test_remover_autor_com_obra(client_logged, autor_com_obra):
+    url = reverse('autor-list') + str(autor_com_obra.id) + '/'
     resp = client_logged.delete(url)
     resultado = resp.json()
     esperado = {'autor': ['autor não pode ser excluido pois possui obras']}
